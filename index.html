@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ÀṢÀ Store — Curated Living</title>
+
+  <!-- ============================================================
+       FONTS
+       Playfair Display  → editorial serif for headings
+       DM Sans           → clean, modern body text
+  ============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <!-- ============================================================
+       TAILWIND CSS (CDN — satisfies "CSS framework" requirement)
+  ============================================================ -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ============================================================
+       TAILWIND CONFIG — extend with brand tokens
+  ============================================================ -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            /* Brand palette */
+            amber:   { DEFAULT: '#C8860A', light: '#F0A82A', pale: '#FDF3DC' },
+            terra:   { DEFAULT: '#8B3A2A', light: '#C05A3E' },
+            cream:   '#FAF7F2',
+            ink:     '#1A1208',
+            muted:   '#6B5C47',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:  ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- ============================================================
+       CUSTOM CSS — animations, fine-detail styling not in Tailwind
+  ============================================================ -->
+  <style>
+    /* ---- Root tokens (mirrors Tailwind config for non-utility use) ---- */
+    :root {
+      --amber:       #C8860A;
+      --amber-light: #F0A82A;
+      --amber-pale:  #FDF3DC;
+      --terra:       #8B3A2A;
+      --cream:       #FAF7F2;
+      --ink:         #1A1208;
+      --muted:       #6B5C47;
+    }
+
+    /* ---- Base ---- */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ---- Noise texture overlay for depth ---- */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ============================================================
+       HEADER / NAV
+    ============================================================ */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250, 247, 242, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(200, 134, 10, 0.15);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .site-header.scrolled {
+      box-shadow: 0 4px 24px rgba(26, 18, 8, 0.08);
+    }
+
+    /* Logo wordmark */
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .logo span {
+      color: var(--amber);
+    }
+
+    /* Nav links */
+    .nav-link {
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--amber);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover { color: var(--ink); }
+    .nav-link:hover::after { width: 100%; }
+
+    /* Mobile menu toggle */
+    #menu-toggle { cursor: pointer; }
+
+    #mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem 1.5rem 1rem;
+      background: var(--cream);
+      border-top: 1px solid rgba(200, 134, 10, 0.15);
+    }
+
+    #mobile-menu.open { display: flex; }
+
+    /* ============================================================
+       HERO SECTION
+    ============================================================ */
+    .hero {
+      position: relative;
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1A1208 0%, #3D2408 60%, #5C3410 100%);
+    }
+
+    /* Decorative circle motif */
+    .hero-circle {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(200, 134, 10, 0.2);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(200, 134, 10, 0.15);
+      border: 1px solid rgba(200, 134, 10, 0.35);
+      color: var(--amber-light);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Staggered entrance animation */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade-up {
+      opacity: 0;
+      animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .delay-1 { animation-delay: 0.15s; }
+    .delay-2 { animation-delay: 0.30s; }
+    .delay-3 { animation-delay: 0.45s; }
+    .delay-4 { animation-delay: 0.60s; }
+
+    /* Hero image placeholder — gradient stands in for a real photo */
+    .hero-img-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .hero-img {
+      width: 340px;
+      height: 420px;
+      border-radius: 12px 80px 12px 80px;
+      background: linear-gradient(160deg, #C8860A 0%, #8B3A2A 100%);
+      box-shadow: 0 32px 64px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      color: rgba(255,255,255,0.2);
+      overflow: hidden;
+    }
+
+    /* Floating stat cards on hero image */
+    .stat-card {
+      position: absolute;
+      background: rgba(250, 247, 242, 0.95);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    /* ============================================================
+       MARQUEE / TICKER
+    ============================================================ */
+    .ticker-wrap {
+      overflow: hidden;
+      background: var(--amber);
+      padding: 0.65rem 0;
+    }
+
+    .ticker-inner {
+      display: flex;
+      gap: 3rem;
+      animation: ticker 20s linear infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       SECTION LABELS
+    ============================================================ */
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    /* ============================================================
+       PRODUCT CARDS
+    ============================================================ */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    /* Responsive grid breakpoints */
+    @media (max-width: 1100px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .product-grid { grid-template-columns: 1fr; }
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(26, 18, 8, 0.06);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.35s ease;
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 48px rgba(26, 18, 8, 0.14);
+    }
+
+    /* Product image area — gradient placeholder */
+    .product-img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle zoom on hover */
+    .product-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      transition: background 0.3s;
+    }
+
+    .product-card:hover .product-img::after {
+      background: rgba(0,0,0,0.06);
+    }
+
+    /* Tag chip on card */
+    .product-tag {
+      position: absolute;
+      top: 12px; left: 12px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      z-index: 2;
+    }
+
+    .product-body { padding: 1.25rem; }
+
+    .product-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      color: var(--ink);
+    }
+
+    .product-desc {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 1rem;
+    }
+
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .product-price {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--ink);
+    }
+
+    .product-price span {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--muted);
+      text-decoration: line-through;
+      margin-left: 4px;
+    }
+
+    /* "Shop Now" CTA button */
+    .btn-shop {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--amber);
+      color: var(--amber);
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s, transform 0.2s;
+    }
+
+    .btn-shop:hover {
+      background: var(--amber);
+      color: #fff;
+      transform: scale(1.04);
+    }
+
+    /* ============================================================
+       PRIMARY CTA BUTTON
+    ============================================================ */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--amber);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      padding: 0.85rem 2rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+      box-shadow: 0 4px 20px rgba(200, 134, 10, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--amber-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(200, 134, 10, 0.45);
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: rgba(255,255,255,0.85);
+      font-weight: 500;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      padding: 0.85rem 2rem;
+      border-radius: 999px;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.25s, color 0.25s;
+    }
+
+    .btn-outline:hover {
+      border-color: rgba(255,255,255,0.7);
+      color: #fff;
+    }
+
+    /* ============================================================
+       FEATURE STRIP
+    ============================================================ */
+    .feature-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid rgba(200, 134, 10, 0.15);
+      border-radius: 20px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .feature-item {
+      padding: 2rem 1.5rem;
+      border-right: 1px solid rgba(200, 134, 10, 0.1);
+      text-align: center;
+      transition: background 0.25s;
+    }
+
+    .feature-item:last-child { border-right: none; }
+    .feature-item:hover { background: var(--amber-pale); }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    @media (max-width: 900px) {
+      .feature-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .feature-item:nth-child(2) { border-right: none; }
+      .feature-item:nth-child(1),
+      .feature-item:nth-child(2) {
+        border-bottom: 1px solid rgba(200, 134, 10, 0.1);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .feature-strip { grid-template-columns: 1fr; }
+      .feature-item { border-right: none !important; border-bottom: 1px solid rgba(200,134,10,0.1); }
+      .feature-item:last-child { border-bottom: none; }
+    }
+
+    /* ============================================================
+       NEWSLETTER SECTION
+    ============================================================ */
+    .newsletter-section {
+      background: linear-gradient(135deg, #1A1208 0%, #3D2408 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .newsletter-section::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      border: 1px solid rgba(200, 134, 10, 0.15);
+      top: -200px; right: -150px;
+    }
+
+    .newsletter-section::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      border: 1px solid rgba(200, 134, 10, 0.1);
+      bottom: -100px; left: -80px;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 999px;
+      padding: 0.85rem 1.5rem;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.25s;
+      min-width: 0;
+    }
+
+    .newsletter-input::placeholder { color: rgba(255,255,255,0.4); }
+    .newsletter-input:focus { border-color: var(--amber); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .site-footer {
+      background: var(--ink);
+      color: rgba(255,255,255,0.7);
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .footer-logo span { color: var(--amber); }
+
+    .footer-link {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    .footer-link:hover { color: var(--amber-light); }
+
+    .footer-col-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1.25rem;
+    }
+
+    .social-icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: border-color 0.25s, color 0.25s, background 0.25s;
+    }
+
+    .social-icon:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    /* ============================================================
+       SCROLL REVEAL
+    ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Stagger children inside a revealed parent */
+    .reveal-stagger > * {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal-stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:0s; }
+    .reveal-stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:0.1s; }
+    .reveal-stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:0.2s; }
+    .reveal-stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:0.3s; }
+
+    /* ============================================================
+       UTILITIES
+    ============================================================ */
+    .divider {
+      width: 48px; height: 2px;
+      background: var(--amber);
+      margin: 1rem 0 1.5rem;
+    }
+
+    /* Hero responsive */
+    @media (max-width: 900px) {
+      .hero { min-height: auto; }
+      .hero-img { width: 260px; height: 320px; }
+    }
+
+    @media (max-width: 640px) {
+      .hero-img-wrap { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       HEADER — sticky, blurred, with mobile hamburger
+  ============================================================ -->
+  <header class="site-header" id="site-header">
+    <div class="max-w-7xl mx-auto px-6">
+
+      <!-- Desktop nav row -->
+      <div class="flex items-center justify-between py-4">
+
+        <!-- Logo -->
+        <a href="#" class="logo">ÀṢÀ<span>.</span></a>
+
+        <!-- Desktop links (hidden on mobile) -->
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="#products" class="nav-link">Shop</a>
+          <a href="#features"  class="nav-link">Why Us</a>
+          <a href="#newsletter" class="nav-link">Newsletter</a>
+          <a href="#contact"   class="nav-link">Contact</a>
+        </nav>
+
+        <!-- Right actions -->
+        <div class="hidden md:flex items-center gap-4">
+          <!-- Cart icon -->
+          <button aria-label="Cart" class="relative text-ink hover:text-amber transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25
+                       a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684
+                       2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106
+                       5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0
+                       a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+            </svg>
+            <!-- Badge -->
+            <span class="absolute -top-1 -right-1.5 bg-amber text-white text-xs
+                         w-4 h-4 rounded-full flex items-center justify-center font-bold leading-none">3</span>
+          </button>
+          <a href="#products" class="btn-primary text-sm px-5 py-2">Shop Now</a>
+        </div>
+
+        <!-- Hamburger (mobile) -->
+        <button id="menu-toggle" class="md:hidden p-1 text-ink" aria-label="Toggle menu">
+          <svg id="icon-open"  xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+          </svg>
+          <svg id="icon-close" class="hidden" xmlns="http://www.w3.org/2000/svg" width="26" height="26"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+
+      </div><!-- /row -->
+    </div>
+
+    <!-- Mobile dropdown menu -->
+    <div id="mobile-menu">
+      <a href="#products"   class="nav-link text-ink">Shop</a>
+      <a href="#features"   class="nav-link text-ink">Why Us</a>
+      <a href="#newsletter" class="nav-link text-ink">Newsletter</a>
+      <a href="#contact"    class="nav-link text-ink">Contact</a>
+      <a href="#products" class="btn-primary self-start mt-2">Shop Now</a>
+    </div>
+
+  </header><!-- /header -->
+
+
+  <!-- ============================================================
+       HERO SECTION
+  ============================================================ -->
+  <section class="hero" id="home">
+
+    <!-- Decorative concentric rings -->
+    <div class="hero-circle" style="width:700px;height:700px;top:-200px;right:-200px;"></div>
+    <div class="hero-circle" style="width:400px;height:400px;top:-50px;right:-50px;"></div>
+
+    <div class="max-w-7xl mx-auto px-6 py-24 flex items-center justify-between gap-12 w-full">
+
+      <!-- Left: copy -->
+      <div class="max-w-xl">
+
+        <div class="hero-badge animate-fade-up">
+          <span>✦</span> New Collection — 2025
+        </div>
+
+        <h1 class="animate-fade-up delay-1 font-serif text-white leading-tight"
+            style="font-size:clamp(2.5rem,6vw,4.5rem);">
+          Curated Living,<br/>
+          <em style="color:var(--amber-light);">Crafted with Soul</em>
+        </h1>
+
+        <p class="animate-fade-up delay-2 mt-5 text-base leading-relaxed"
+           style="color:rgba(255,255,255,0.65);">
+          Discover a handpicked selection of premium homeware, fashion, and
+          artisan goods — rooted in African craftsmanship and elevated for
+          modern living.
+        </p>
+
+        <div class="animate-fade-up delay-3 flex flex-wrap gap-4 mt-8">
+          <a href="#products" class="btn-primary">Explore Collection ↓</a>
+          <a href="#features" class="btn-outline">Our Story</a>
+        </div>
+
+        <!-- Trust indicators -->
+        <div class="animate-fade-up delay-4 mt-10 flex items-center gap-6"
+             style="color:rgba(255,255,255,0.45); font-size:0.8rem;">
+          <span>⭐ 4.9 / 5 Rating</span>
+          <span style="width:1px;height:1em;background:currentColor;opacity:0.3;"></span>
+          <span>2,400+ Happy Customers</span>
+          <span style="width:1px;height:1em;background:currentColor;opacity:0.3;"></span>
+          <span>Free Returns</span>
+        </div>
+
+      </div><!-- /copy -->
+
+      <!-- Right: decorative image card -->
+      <div class="hero-img-wrap animate-fade-up delay-2">
+        <div class="hero-img">
+          🏺
+          <!-- In production, replace with <img src="..." alt="..."/> -->
+        </div>
+
+        <!-- Floating stat: items sold -->
+        <div class="stat-card" style="bottom:-20px;left:-30px;">
+          <p style="font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Items Sold</p>
+          <p style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--ink);line-height:1;">12,400<span style="font-size:0.75rem;color:var(--amber);font-family:sans-serif;"> +</span></p>
+        </div>
+
+        <!-- Floating stat: rating -->
+        <div class="stat-card" style="top:-16px;right:-24px;">
+          <p style="font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Customer Love</p>
+          <p style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--ink);line-height:1;">4.9 ⭐</p>
+        </div>
+
+      </div><!-- /hero image -->
+
+    </div>
+  </section><!-- /hero -->
+
+
+  <!-- ============================================================
+       TICKER / MARQUEE
+  ============================================================ -->
+  <div class="ticker-wrap">
+    <div class="ticker-inner">
+      <!-- Duplicated for seamless loop -->
+      <span class="ticker-item">✦ Free Shipping on Orders Over ₦25,000</span>
+      <span class="ticker-item">✦ New Arrivals Every Friday</span>
+      <span class="ticker-item">✦ Secure Checkout</span>
+      <span class="ticker-item">✦ Artisan-Made, Premium Quality</span>
+      <span class="ticker-item">✦ 30-Day Free Returns</span>
+      <span class="ticker-item">✦ Free Shipping on Orders Over ₦25,000</span>
+      <span class="ticker-item">✦ New Arrivals Every Friday</span>
+      <span class="ticker-item">✦ Secure Checkout</span>
+      <span class="ticker-item">✦ Artisan-Made, Premium Quality</span>
+      <span class="ticker-item">✦ 30-Day Free Returns</span>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       PRODUCT SECTION
+  ============================================================ -->
+  <section id="products" class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+
+      <!-- Section header -->
+      <div class="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
+        <div>
+          <p class="section-label">✦ Featured Products</p>
+          <h2 class="section-title text-ink" style="font-size:clamp(2rem,4vw,3rem);">
+            This Season's<br/>Finest Picks
+          </h2>
+          <div class="divider"></div>
+          <p class="text-muted text-sm max-w-md leading-relaxed">
+            Every piece is thoughtfully sourced — blending timeless African craft
+            with the sensibility of contemporary design.
+          </p>
+        </div>
+        <!-- Filter pills -->
+        <div class="flex flex-wrap gap-2">
+          <button class="text-xs font-semibold uppercase tracking-widest px-4 py-2 rounded-full bg-amber text-white">All</button>
+          <button class="text-xs font-semibold uppercase tracking-widest px-4 py-2 rounded-full border border-amber text-amber hover:bg-amber hover:text-white transition-all">Homeware</button>
+          <button class="text-xs font-semibold uppercase tracking-widest px-4 py-2 rounded-full border border-amber text-amber hover:bg-amber hover:text-white transition-all">Fashion</button>
+          <button class="text-xs font-semibold uppercase tracking-widest px-4 py-2 rounded-full border border-amber text-amber hover:bg-amber hover:text-white transition-all">Artisan</button>
+        </div>
+      </div>
+
+      <!-- Product grid -->
+      <div class="product-grid reveal-stagger">
+
+        <!-- ---- Card 1 ---- -->
+        <article class="product-card">
+          <!-- Tag: NEW -->
+          <div class="product-tag bg-amber text-white">New</div>
+          <div class="product-img" style="background:linear-gradient(135deg,#FDF3DC,#F0A82A);">
+            🏺
+          </div>
+          <div class="product-body">
+            <h3 class="product-name">Terracotta Vase Set</h3>
+            <p class="product-desc">Hand-thrown in Kano by master potters. Each piece uniquely signed with natural earth pigments.</p>
+            <div class="product-footer">
+              <div class="product-price">
+                ₦14,500 <span>₦18,000</span>
+              </div>
+              <button class="btn-shop">Shop Now</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- ---- Card 2 ---- -->
+        <article class="product-card">
+          <!-- Tag: SALE -->
+          <div class="product-tag" style="background:#8B3A2A;color:#fff;">−20%</div>
+          <div class="product-img" style="background:linear-gradient(135deg,#2D4A22,#6B9E58);">
+            🌿
+          </div>
+          <div class="product-body">
+            <h3 class="product-name">Woven Raffia Tray</h3>
+            <p class="product-desc">Sustainably harvested raffia palm, hand-woven in a geometric motif. Perfect centrepiece for any table.</p>
+            <div class="product-footer">
+              <div class="product-price">
+                ₦9,200 <span>₦11,500</span>
+              </div>
+              <button class="btn-shop">Shop Now</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- ---- Card 3 ---- -->
+        <article class="product-card">
+          <!-- Tag: BEST SELLER -->
+          <div class="product-tag" style="background:#1A1208;color:#F0A82A;">★ Best</div>
+          <div class="product-img" style="background:linear-gradient(135deg,#3B2060,#7C54C4);">
+            👜
+          </div>
+          <div class="product-body">
+            <h3 class="product-name">Adire Silk Tote Bag</h3>
+            <p class="product-desc">Yoruba indigo-dyed silk meets a contemporary structured silhouette. Ethically produced in Abeokuta.</p>
+            <div class="product-footer">
+              <div class="product-price">
+                ₦22,000
+              </div>
+              <button class="btn-shop">Shop Now</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- ---- Card 4 ---- -->
+        <article class="product-card">
+          <!-- Tag: LIMITED -->
+          <div class="product-tag" style="background:#C05A3E;color:#fff;">Limited</div>
+          <div class="product-img" style="background:linear-gradient(135deg,#2A3A5C,#4A6FA5);">
+            🕯️
+          </div>
+          <div class="product-body">
+            <h3 class="product-name">Shea & Cedarwood Candle</h3>
+            <p class="product-desc">Cold-process shea wax infused with Nigerian cedarwood and ylang-ylang essential oils. 60-hour burn time.</p>
+            <div class="product-footer">
+              <div class="product-price">
+                ₦7,800 <span>₦9,500</span>
+              </div>
+              <button class="btn-shop">Shop Now</button>
+            </div>
+          </div>
+        </article>
+
+      </div><!-- /product-grid -->
+
+      <!-- View all CTA -->
+      <div class="reveal text-center mt-14">
+        <a href="#" class="btn-primary" style="background:var(--ink);box-shadow:none;">
+          View Full Collection →
+        </a>
+      </div>
+
+    </div>
+  </section><!-- /products -->
+
+
+  <!-- ============================================================
+       FEATURE STRIP  (Why Shop With Us)
+  ============================================================ -->
+  <section id="features" class="py-16 px-6 bg-amber-pale">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="reveal text-center mb-10">
+        <p class="section-label">✦ Our Promise</p>
+        <h2 class="section-title text-ink" style="font-size:clamp(1.75rem,3.5vw,2.5rem);">
+          Why Shop with Àṣà?
+        </h2>
+      </div>
+
+      <div class="feature-strip reveal">
+
+        <!-- Feature 1 -->
+        <div class="feature-item">
+          <div class="feature-icon">🚚</div>
+          <h3 class="font-serif font-bold text-ink mb-1">Fast Delivery</h3>
+          <p class="text-xs text-muted leading-relaxed">Nationwide delivery within 3–5 working days. Lagos orders in 24 hours.</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-item">
+          <div class="feature-icon">✦</div>
+          <h3 class="font-serif font-bold text-ink mb-1">Authentic Craft</h3>
+          <p class="text-xs text-muted leading-relaxed">Every item sourced directly from verified Nigerian artisans and cooperatives.</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-item">
+          <div class="feature-icon">🔄</div>
+          <h3 class="font-serif font-bold text-ink mb-1">30-Day Returns</h3>
+          <p class="text-xs text-muted leading-relaxed">Not in love? Return it hassle-free within 30 days, no questions asked.</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-item">
+          <div class="feature-icon">🔐</div>
+          <h3 class="font-serif font-bold text-ink mb-1">Secure Checkout</h3>
+          <p class="text-xs text-muted leading-relaxed">Paystack-powered checkout. Your payment data is always encrypted & safe.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section><!-- /features -->
+
+
+  <!-- ============================================================
+       NEWSLETTER SECTION
+  ============================================================ -->
+  <section id="newsletter" class="newsletter-section py-24 px-6">
+    <div class="max-w-2xl mx-auto text-center relative z-10 reveal">
+
+      <p class="section-label" style="color:var(--amber-light);">✦ Stay in the Loop</p>
+      <h2 class="font-serif text-white font-bold leading-tight mb-4"
+          style="font-size:clamp(2rem,4vw,3rem);">
+        Get First Access to<br/>New Arrivals
+      </h2>
+      <p class="text-sm leading-relaxed mb-8" style="color:rgba(255,255,255,0.55);">
+        Join 4,200+ subscribers who get early access to new drops, exclusive discounts,
+        and stories from the makers behind every piece.
+      </p>
+
+      <!-- Email input row -->
+      <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+        <input type="email" placeholder="your@email.com" class="newsletter-input"/>
+        <button class="btn-primary flex-shrink-0">Subscribe</button>
+      </div>
+
+      <p class="mt-4 text-xs" style="color:rgba(255,255,255,0.3);">
+        No spam, ever. Unsubscribe anytime.
+      </p>
+
+    </div>
+  </section><!-- /newsletter -->
+
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="site-footer" id="contact">
+    <div class="max-w-7xl mx-auto px-6 pt-16 pb-10">
+
+      <!-- Main footer grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
+
+        <!-- Brand column -->
+        <div>
+          <div class="footer-logo mb-4">ÀṢÀ<span>.</span></div>
+          <p class="text-sm leading-relaxed mb-5" style="color:rgba(255,255,255,0.45);">
+            Curated living goods rooted in African craftsmanship — elevated for
+            the modern home.
+          </p>
+          <!-- Social icons (emoji stand-ins) -->
+          <div class="flex gap-3">
+            <a href="#" class="social-icon" aria-label="Instagram">𝕀</a>
+            <a href="#" class="social-icon" aria-label="Twitter">𝕏</a>
+            <a href="#" class="social-icon" aria-label="Facebook">𝔽</a>
+            <a href="#" class="social-icon" aria-label="TikTok">𝕋</a>
+          </div>
+        </div>
+
+        <!-- Shop column -->
+        <div>
+          <p class="footer-col-title">Shop</p>
+          <a href="#" class="footer-link">New Arrivals</a>
+          <a href="#" class="footer-link">Best Sellers</a>
+          <a href="#" class="footer-link">Homeware</a>
+          <a href="#" class="footer-link">Fashion & Bags</a>
+          <a href="#" class="footer-link">Artisan Gifts</a>
+        </div>
+
+        <!-- Info column -->
+        <div>
+          <p class="footer-col-title">Information</p>
+          <a href="#" class="footer-link">About Us</a>
+          <a href="#" class="footer-link">Our Artisans</a>
+          <a href="#" class="footer-link">Sustainability</a>
+          <a href="#" class="footer-link">Careers</a>
+          <a href="#" class="footer-link">Press</a>
+        </div>
+
+        <!-- Help / Contact column -->
+        <div>
+          <p class="footer-col-title">Help</p>
+          <a href="#" class="footer-link">Track My Order</a>
+          <a href="#" class="footer-link">Returns & Refunds</a>
+          <a href="#" class="footer-link">Shipping Info</a>
+          <a href="#" class="footer-link">FAQ</a>
+          <a href="mailto:hello@asastore.ng" class="footer-link">hello@asastore.ng</a>
+        </div>
+
+      </div><!-- /grid -->
+
+      <!-- Divider -->
+      <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:2rem;"
+           class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs"
+           style="color:rgba(255,255,255,0.3);">
+        <p style="color:rgba(255,255,255,0.3);">
+          © 2025 Àṣà Store. All rights reserved. Built with ❤️ in Lagos, Nigeria.
+        </p>
+        <div class="flex gap-5">
+          <a href="#" class="footer-link" style="margin:0;">Privacy Policy</a>
+          <a href="#" class="footer-link" style="margin:0;">Terms of Service</a>
+        </div>
+      </div>
+
+    </div>
+  </footer><!-- /footer -->
+
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    /* ---- Sticky header shadow on scroll ---- */
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+
+    /* ---- Mobile menu toggle ---- */
+    const toggle    = document.getElementById('menu-toggle');
+    const mobileNav = document.getElementById('mobile-menu');
+    const iconOpen  = document.getElementById('icon-open');
+    const iconClose = document.getElementById('icon-close');
+
+    toggle.addEventListener('click', () => {
+      const isOpen = mobileNav.classList.toggle('open');
+      iconOpen.classList.toggle('hidden', isOpen);
+      iconClose.classList.toggle('hidden', !isOpen);
+    });
+
+    /* Close mobile menu when a link is clicked */
+    mobileNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileNav.classList.remove('open');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+      });
+    });
+
+    /* ---- Scroll reveal (IntersectionObserver) ---- */
+    const revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target); // fire once
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealEls.forEach(el => observer.observe(el));
+
+    /* ---- "Shop Now" button micro-interaction ---- */
+    document.querySelectorAll('.btn-shop').forEach(btn => {
+      btn.addEventListener('click', function () {
+        this.textContent = 'Added ✓';
+        this.style.background = 'var(--amber)';
+        this.style.color = '#fff';
+        setTimeout(() => {
+          this.textContent = 'Shop Now';
+          this.style.background = '';
+          this.style.color = '';
+        }, 1800);
+      });
+    });
+  </script>
+
+</body>
+</html>
